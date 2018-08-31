@@ -2,9 +2,9 @@ import sys
 
 debug = False
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
 	print("Incorrect usage of command: diras")
-	print("	Please use: diras /path/to/file")
+	print("	Please use: diras /path/to/file /output/file")
 	exit(1)
 
 with open(sys.argv[1]) as File:
@@ -37,12 +37,19 @@ for line in asm_file:
 				exit(1)
 			instructions.append('00000001')
 			instructions.append(str(format(int(mnemonic), '#010b')[2:]))
-		elif mnemonic[0] == "r":
+		elif mnemonic[0] == "r" and mnemonic[1:].isdigit():
 			if int(mnemonic[1:]) > 255:
 				print("Found int larger than 256 in line:")
 				print(line)
 				exit(1)
 			instructions.append('00000010')
+			instructions.append(str(format(int(mnemonic[1:]), '#010b')[2:]))
+		elif mnemonic[0] == "e" and mnemonic[1:].isdigit():
+			if int(mnemonic[1:]) > 255:
+				print("Found int larger than 256 in line:")
+				print(line)
+				exit(1)
+			instructions.append('00000101')
 			instructions.append(str(format(int(mnemonic[1:]), '#010b')[2:]))
 		else:
 			opcode = mnemonics[mnemonic]
@@ -52,7 +59,9 @@ if debug:
 	print(instructions)
 
 # print out assembled bin for pipe into file
+file = ""
 for instruction in instructions:
-	print(instruction, end="")
+	file += instruction
 
-print("")
+f = open(sys.argv[2], "w")
+f.write(file)
