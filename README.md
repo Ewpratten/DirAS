@@ -6,7 +6,7 @@ Make sure you have python3 installed before following these steps.
 
 First, clone this repo to a safe place (like your home directory). Then run this in your terminal:
 ```bash
-echo "#!/bin/bash" > /usr/local/bin/diras
+echo "#\!/bin/bash" > /usr/local/bin/diras
 echo "python3 </path/to/diras/repo>/src $1 $2" >> /usr/loacl/bin/diras
 chmod 755 /usr/local/bin/diras
 ```
