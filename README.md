@@ -1,5 +1,5 @@
 # DirAS
-The Dirobium ASsembler
+The Dirobium ASsembler (pronounced dir-as)
 
 ## Installation
 Make sure you have python3 installed before following these steps.
