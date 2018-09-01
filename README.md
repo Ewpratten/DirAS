@@ -34,6 +34,11 @@ DirAS' mnemonics map directly to the Dirobium basic instruction set. They are:
 | jmpf     | jmpf 20     | jumps forward 20 instructions (not yet supported)                                   |
 | jmpb     | jmpb 40     | jumps backwards 40 instructions (not yet supported)                                 |
 
+## Registers
+The registers: r0 - r9 can be used for whatever you would like.
+The registers: e0 - e9 are used for calling functions and other system calls.
+The register: e1 is for storing a return value. Do not edit directly, use the `ret` mnemonic.
+
 ## Building a program
 To build a program for the Dirobium emulator, use:
 ```
