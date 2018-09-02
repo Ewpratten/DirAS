@@ -30,7 +30,44 @@ mnemonics = {
 	"paus":"10001100",
 	"load":"10001101",
 	"rom":"00000011",
-	"coredump":"10001110"
+	"coredump":"10001110",
+	"movs":"10001111",
+	"push":"10010000",
+	"pop":"10010001"
+}
+
+string_letters = {
+	"_":0,
+	"a":1,
+	"b":2,
+	"c":3,
+	"d":4,
+	"e":5,
+	"f":6,
+	"g":7,
+	"h":8,
+	"i":9,
+	"j":10,
+	"k":11,
+	"l":12,
+	"m":13,
+	"n":14,
+	"o":15,
+	"p":16,
+	"q":17,
+	"r":18,
+	"s":19,
+	"t":20,
+	"u":21,
+	"v":22,
+	"w":23,
+	"x":24,
+	"y":25,
+	"z":26,
+	":":27,
+	"1":28,
+	".":29,
+	"0":30
 }
 
 for line in asm_file:
@@ -58,6 +95,19 @@ for line in asm_file:
 						exit(1)
 					instructions.append('00000101')
 					instructions.append(str(format(int(mnemonic[1:]), '#010b')[2:]))
+				elif mnemonic[0] == "[":
+					str_explode = [x.strip() for x in mnemonic[1:].split(',')]
+					text = str_explode[1][:int(str_explode[0])]
+					legnth = int(str_explode[0])
+					# print([legnth, text])
+					
+					instructions.append('00000110')
+					instructions.append(str(format(int(legnth), '#010b')[2:]))
+					i = 0
+					while i < legnth:
+						# print(i)
+						instructions.append(str(format(int(string_letters[text[i]]), '#010b')[2:]))
+						i+=1
 				else:
 					opcode = mnemonics[mnemonic]
 					instructions.append(opcode)
