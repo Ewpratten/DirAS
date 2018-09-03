@@ -33,9 +33,13 @@ mnemonics = {
 	"coredump":"10001110",
 	"movs":"10001111",
 	"push":"10010000",
-	"pop":"10010001"
+	"pop":"10010001",
+	"cmp":"10010010",
+	"lte":"10010011",
+	"gte":"10010100"
 }
 
+# Used to convert strings to numbers. A replacement for python's string.ascii_lowercase
 string_letters = {
 	"_":0,
 	"a":1,
@@ -70,44 +74,72 @@ string_letters = {
 	"0":30
 }
 
+def intError(line_number):
+	print("Number larger than 255 found on line:")
+	print("	" + str(line_number))
+	exit(1)
+
 for line in asm_file:
+	
 	if len(line) >= 1:
-		if not line[0][0] == "#":
+		if not line[0][0] == "#": # If not comment
+			
 			for mnemonic in line:
+				
+				# Int
 				if mnemonic.isdigit():
 					if int(mnemonic) > 255:
-						print("Found int larger than 256 in line:")
-						print(line)
-						exit(1)
+						intError(line)
+					
 					instructions.append('00000001')
 					instructions.append(str(format(int(mnemonic), '#010b')[2:]))
+				
+				# general register
 				elif mnemonic[0] == "r" and mnemonic[1:].isdigit():
 					if int(mnemonic[1:]) > 255:
-						print("Found int larger than 256 in line:")
-						print(line)
-						exit(1)
+						intError(line)
+					
 					instructions.append('00000010')
 					instructions.append(str(format(int(mnemonic[1:]), '#010b')[2:]))
+				
+				# extended register
 				elif mnemonic[0] == "e" and mnemonic[1:].isdigit():
 					if int(mnemonic[1:]) > 255:
-						print("Found int larger than 256 in line:")
-						print(line)
-						exit(1)
+						intError(line)
+					
 					instructions.append('00000101')
 					instructions.append(str(format(int(mnemonic[1:]), '#010b')[2:]))
+				
+				# read-only register
+				elif mnemonic[0] == "i" and mnemonic[1:].isdigit():
+					if int(mnemonic[1:]) > 255:
+						intError(line)
+					
+					instructions.append('00000111')
+					instructions.append(str(format(int(mnemonic[1:]), '#010b')[2:]))
+				
+				# string (strings start with [ )
 				elif mnemonic[0] == "[":
+					# Turn assembly string into a list [legnth, "text_here"]
 					str_explode = [x.strip() for x in mnemonic[1:].split(',')]
+					
+					# get text from str_explode and strip trailing char "]"
 					text = str_explode[1][:int(str_explode[0])]
+					
+					# Get legnth from str_explode
 					legnth = int(str_explode[0])
-					# print([legnth, text])
 					
 					instructions.append('00000110')
 					instructions.append(str(format(int(legnth), '#010b')[2:]))
+					
+					# Append binary string
 					i = 0
 					while i < legnth:
 						# print(i)
 						instructions.append(str(format(int(string_letters[text[i]]), '#010b')[2:]))
 						i+=1
+				
+				# Regular instruction
 				else:
 					opcode = mnemonics[mnemonic]
 					instructions.append(opcode)
@@ -115,7 +147,7 @@ for line in asm_file:
 if debug:
 	print(instructions)
 
-# print out assembled bin for pipe into file
+# store assembled code in a file from argv
 file = ""
 for instruction in instructions:
 	file += instruction
